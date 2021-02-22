@@ -30,6 +30,7 @@ public class BlogUserInterceptor extends HandlerInterceptorAdapter {
                 return true;
             }
         }
+
         logger.info("重定向");
         response.sendRedirect("/index");
         return true;
