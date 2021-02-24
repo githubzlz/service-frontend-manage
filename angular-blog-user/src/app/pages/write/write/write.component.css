@@ -1,0 +1,92 @@
+.write {
+  overflow: hidden;
+}
+
+.line {
+  height: 1px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  margin-bottom: 10px;
+}
+.blogPublish {
+  width: 600px;
+  background-color: black;
+}
+#setSummary {
+  position: absolute;
+  overflow: hidden;
+  width: 0;
+  height: 0;
+  top: 230px;
+  right: 10%;
+  margin-right: -250px;
+  background-color: #ffffff;
+  visibility: hidden;
+  border-radius: 5px;
+  z-index: 999;
+  transition: 200ms ease-in;
+}
+
+#summary-back {
+  visibility: hidden;
+  position: fixed;
+  right: -4000px;
+  top: -4000px;
+  background: rgba(0, 0, 0, 0.35);
+  width: 10000px;
+  height: 10000px;
+  z-index: 998;
+}
+
+#summary-titel {
+  padding: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+#summary-close {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+}
+
+#summary-text {
+  position: absolute;
+  left: 15px;
+  top: 60px;
+}
+
+#input_summary {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  width: 360px;
+  height: 160px;
+  border-radius: 5px;
+  margin-left: 8px;
+}
+
+#file_upload {
+  padding: 20px;
+  visibility: hidden;
+  position: absolute;
+  overflow: hidden;
+  top: 220px;
+  right: 10%;
+  margin-right: -250px;
+  width: 400px;
+  height: 200px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  z-index: 999;
+  transition: 200ms ease-in;
+}
+#file_background {
+  visibility: hidden;
+  position: fixed;
+  right: -4000px;
+  top: -4000px;
+  background: rgba(0, 0, 0, 0.35);
+  width: 10000px;
+  height: 10000px;
+  z-index: 998;
+}

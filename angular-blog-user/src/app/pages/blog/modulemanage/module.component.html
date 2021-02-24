@@ -1,0 +1,307 @@
+<nz-breadcrumb style="margin-bottom: 5px; margin-left: 10px;">
+  <nz-breadcrumb-item>
+    <a routerLink="/index/index">
+      <i nz-icon nzType="home"></i>
+      <span>首页</span>
+    </a>
+  </nz-breadcrumb-item>
+  <nz-breadcrumb-item>
+    <a routerLink="/blog/bloglist">
+      <i nz-icon nzType="book"></i>
+      <span>博客信息</span>
+    </a>
+  </nz-breadcrumb-item>
+  <nz-breadcrumb-item>
+    <span>分类管理</span>
+  </nz-breadcrumb-item>
+</nz-breadcrumb>
+<nz-card>
+  <nz-table
+    [nzLoading]="modulesLoading"
+    [nzData]="modules"
+    [nzTitle]="headerTitle"
+    [nzTotal]="module.pageInfo.totalSize"
+    [(nzPageSize)]="module.pageInfo.pageSize"
+    [(nzPageIndex)]="module.pageInfo.pageNum"
+    (nzPageIndexChange)="queryTypeTree()"
+    (nzPageSizeChange)="queryTypeTree()"
+    nzFrontPagination="false"
+    nzShowQuickJumper="true"
+    nzShowSizeChanger="true"
+    style="height: 790px"
+    [nzNoResult]="nzNoResult"
+  >
+    <ng-template #headerTitle>
+      <div class="line"></div>
+      <h2 style="display: inline-block; height: 30px; vertical-align: top;">
+        文章分类列表
+      </h2>
+      <button nz-button (click)="queryTypeTree()" style="float: right; cursor: pointer">
+        <i nz-icon nzType="sync" nzTheme="outline" ></i>
+        刷新
+      </button>
+    </ng-template>
+    <ng-template #nzNoResult>
+      <a (click)="addType(3, null)">添加新分类</a>
+    </ng-template>
+    <thead>
+      <tr>
+        <th nzWidth="15%">分类名称</th>
+        <th nzWidth="20%">分类描述</th>
+        <th>状态</th>
+        <th>分类等级</th>
+        <th>创建时间</th>
+        <th [nzAlign]="'center'">
+          子分类数量
+          <br>
+          (本级)
+        </th>
+        <th [nzAlign]="'center'">
+          子分类数量
+          <br>
+          (总量)
+        </th>
+        <th [nzAlign]="'center'">
+          文章数量
+          <br>
+          (本级)
+        </th>
+        <th [nzAlign]="'center'">
+          文章数量
+          <br>
+          (总量)
+        </th>
+
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let data of modules; let index1 = index">
+          <tr>
+            <td [nzIndentSize]="data.level! * 20"
+                [nzShowExpand]="data.isLastLevel !== 0"
+                [nzExpand]="showMenu"
+                (nzExpandChange)="changeMenuState(data, index1)">
+            <span style="margin-left: 5px">
+              <input nz-input *ngIf="data.showInput" [(ngModel)]="moduleUpdateCache.title" style="width: 60%">
+              <span *ngIf="!data.showInput"
+                    nz-popover
+                    [nzPopoverContent]="contentTemplate12"
+                    nzPopoverPlacement="bottomLeft">
+                {{ data.title }}</span>
+              <ng-template #contentTemplate12>
+                <div style="max-width: 300px;">{{ data.title }}</div>
+              </ng-template>
+            </span>
+            </td>
+            <td>
+              <input nz-input *ngIf="data.showInput" [(ngModel)]="moduleUpdateCache.introduction">
+              <span *ngIf="!data.showInput"
+                    nz-popover
+                    [nzPopoverContent]="contentTemplate11"
+                    nzPopoverPlacement="bottomLeft"
+              >{{data.introduction}}</span>
+              <ng-template #contentTemplate11>
+                <div style="max-width: 300px;">{{ data.introduction }}</div>
+              </ng-template>
+            </td>
+            <td [nzAlign]="'center'">
+              <nz-badge nzStatus="success" nzText="启用" *ngIf="!data.isPublish"></nz-badge>
+              <nz-badge nzStatus="error" nzText="停用" *ngIf="data.isPublish"></nz-badge>
+            </td>
+            <td [nzAlign]="'center'">
+              <span style="color:#34a353;" *ngIf="data.level == 1">一级分类</span>
+              <span style="color:orange;" *ngIf="data.level == 2">二级分类</span>
+              <span style="color:red;" *ngIf="data.level == 3">三级分类</span>
+              <span style="color:gray;" *ngIf="data.level >= 4">{{data.level + '级分类'}}</span>
+            </td>
+            <td [nzAlign]="'center'">
+              {{ data.createdTime | date: "yyyy-MM-dd HH:mm:ss" }}
+            </td>
+            <td [nzAlign]="'center'">
+              {{ data.isLastLevel}}
+            </td>
+            <td [nzAlign]="'center'">
+              {{ data.childCategoryAmountTotal}}
+            </td>
+            <td [nzAlign]="'center'">
+              {{ data.blogAmount}}
+            </td>
+            <td [nzAlign]="'center'">
+              {{ data.blogAmountTotal}}
+            </td>
+
+            <td>
+              <div *ngIf="!data.showInput">
+                <a>
+              <span
+                *ngIf="data.isPublish === 1"
+                (click)="updateState(data,index1, 0)"
+              >启用</span
+              >
+                  <span
+                    *ngIf="data.isPublish === 0"
+                    (click)="updateState(data,index1, 1)"
+                  >停用</span
+                  >
+                </a>
+                <nz-divider nzType="vertical"></nz-divider>
+                <a (click)="updateModuleInfo(data,index1, 1)" >修改</a>
+                <nz-divider nzType="vertical"></nz-divider>
+                <a
+                  nz-popconfirm
+                  nzPopconfirmTitle="是否确认删除该分类信息？"
+                  nzPopconfirmPlacement="bottom"
+                  (nzOnConfirm)="deleteBlogType(data.id)"
+                >删除</a
+                >
+                <nz-divider nzType="vertical"></nz-divider>
+                <a
+                  nz-dropdown
+                  [nzDropdownMenu]="menu">
+                  更多
+                  <i nz-icon nzType="down"></i>
+                </a>
+                <nz-dropdown-menu #menu="nzDropdownMenu">
+                  <ul nz-menu nzSelectable>
+                    <li nz-menu-item (click)="addType(1, index1)">
+                      新增同级
+                    </li>
+                    <li nz-menu-item (click)="addType(2, index1)">
+                      新增下级
+                    </li>
+                    <li nz-menu-item (click)="bindingBlog(index1)">
+                      绑定文章
+                    </li>
+                  </ul>
+                </nz-dropdown-menu>
+              </div>
+              <div *ngIf="data.showInput">
+                <a (click)="updateModuleInfo(data,index1, 0)">取消</a>
+                <nz-divider nzType="vertical"></nz-divider>
+                <a (click)="updateModuleInfo(data,index1, 2)">确认</a>
+              </div>
+            </td>
+          </tr>
+</ng-container>
+    </tbody>
+  </nz-table>
+</nz-card>
+<nz-modal
+  [(nzVisible)]="insertVisible"
+  nzTitle="新增分类"
+  (nzOnCancel)="handleInsertCancel()"
+  (nzOnOk)="handleInsertOk()"
+  [nzOkLoading]="isInsertLoading"
+>
+  <div nz-row style="margin-top: 10px; margin-bottom: 10px">
+    <div nz-col nzSpan="6">
+      分类名：
+    </div>
+    <div nz-col nzSpan="16">
+      <input nz-input placeholder="分类名" [(ngModel)]="insertCategory.title">
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="6">
+      分类描述：
+    </div>
+    <div nz-col nzSpan="16">
+      <input nz-input placeholder="分类描述" [(ngModel)]="insertCategory.introduction">
+    </div>
+  </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="isBindingVisible"
+          nzTitle="绑定文章"
+          (nzOnCancel)="handleBindingCancel()" [nzContent]="nzModalContent" [nzWidth]="1000">
+  <ng-template #nzModalContent>
+    <nz-spin nzSimple
+             [nzIndicator]="indicatorTemplate"
+             *ngIf="isLoadingBindingInfo"
+             style="width: 100%; height: 480px; text-align: center; padding-top: 200px">
+    </nz-spin>
+    <ng-template #indicatorTemplate><i nz-icon nzType="loading" style="font-size: 30px"></i></ng-template>
+    <nz-transfer *ngIf="!isLoadingBindingInfo"
+      [nzDataSource]="this.bindingCache.bindingSources"
+      [nzDisabled]="false"
+      [nzShowSearch]="true"
+      [nzShowSelectAll]="false"
+      [nzRenderList]="[renderList, renderList]"
+      (nzSelectChange)="select($event)"
+      (nzChange)="change($event)"
+       style="min-height: 480px"
+    >
+      <ng-template
+        #renderList
+        let-items
+        let-stat="stat"
+        let-disabled="disabled"
+        let-onItemSelectAll="onItemSelectAll"
+        let-onItemSelect="onItemSelect"
+      >
+        <nz-table #t [nzData]="items" nzSize="small"
+                  nzShowPagination="false"
+                  [nzScroll]="{'y': '300px'}"
+                  [nzPageSize]="300"
+                  style="width: 430px">
+          <thead>
+          <tr>
+            <th
+              [nzShowCheckbox]="true"
+              [nzChecked]="stat.checkAll"
+              [nzIndeterminate]="stat.checkHalf"
+              (nzCheckedChange)="onItemSelectAll($event)"
+            ></th>
+            <th nzWidth="40%">标题</th>
+            <th nzWidth="55%">简介</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let data of t.data" (click)="onItemSelect(data)">
+            <td [nzShowCheckbox]="true"
+                [nzChecked]="data.checked"
+                [nzDisabled]="disabled || data.disabled"
+                (nzCheckedChange)="onItemSelect(data)">
+            </td>
+            <td>
+              <div nz-popover
+                   [nzPopoverContent]="contentTemplate1"
+                   nzPopoverPlacement="bottomLeft"
+                   style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap; width: 100px">
+                {{ data.title }}
+              </div>
+              <ng-template #contentTemplate1>
+                <div style="max-width: 300px;">{{ data.title }}</div>
+              </ng-template>
+            </td>
+            <td>
+              <div nz-popover
+                   [nzPopoverContent]="contentTemplate2"
+                   nzPopoverPlacement="bottomLeft"
+                style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap; width: 200px">
+                {{ data.description }}
+              </div>
+              <ng-template #contentTemplate2>
+                <div style="max-width: 300px;">{{ data.description }}</div>
+              </ng-template>
+            </td>
+          </tr>
+          </tbody>
+        </nz-table>
+      </ng-template>
+      <ng-template
+        #renderList2
+        let-items
+        let-stat="stat"
+        let-disabled="disabled"
+        let-onItemSelectAll="onItemSelectAll"
+        let-onItemSelect="onItemSelect"
+      >
+      </ng-template>
+    </nz-transfer>
+  </ng-template>
+  <div *nzModalFooter>
+    <button nz-button nzType="default" (click)="handleBindingCancel()">取消</button>
+    <button nz-button nzType="primary" (click)="handleBindingOk()" [nzLoading]="isBindingConfirmLoading">确定</button>
+  </div>
+</nz-modal>

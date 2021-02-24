@@ -1,0 +1,205 @@
+<nz-table style="margin-top: 40px" [nzData]="users"
+          [nzFrontPagination]="false"
+          >
+  <thead>
+  <tr>
+    <th>
+      用户名
+      <i
+        nz-th-extra
+        class="search"
+        style="float: right; margin-top: 5px"
+        nz-icon
+        nz-dropdown
+        #dropdown="nzDropdown"
+        nzType="search"
+        [nzDropdownMenu]="menu"
+        [class.ant-table-filter-open]="dropdown.nzVisible"
+        nzTrigger="click"
+        nzPlacement="bottomLeft"
+        [nzClickHide]="false"
+        nzTableFilter
+      ></i>
+      <nz-dropdown-menu #menu="nzDropdownMenu">
+        <div class="search-box">
+          <input type="text" nz-input placeholder="输入用户名" [(ngModel)]="selectModule.username" />
+          <button nz-button nzSize="small" nzType="primary" (click)="getUserList()" class="search-button">
+            查询
+          </button>
+          <button nz-button nzSize="small" (click)="resetUserSelectModule()">重置</button>
+        </div>
+      </nz-dropdown-menu>
+    </th>
+    <th>
+      邮箱
+      <i
+        nz-th-extra
+        class="search"
+        style="float: right; margin-top: 5px"
+        nz-icon
+        nz-dropdown
+        #dropdown="nzDropdown"
+        nzType="search"
+        [nzDropdownMenu]="menu2"
+        [class.ant-table-filter-open]="dropdown.nzVisible"
+        nzTrigger="click"
+        nzPlacement="bottomLeft"
+        [nzClickHide]="false"
+        nzTableFilter
+      ></i>
+      <nz-dropdown-menu #menu2="nzDropdownMenu">
+        <div class="search-box">
+          <input type="text" nz-input placeholder="输入邮箱地址" [(ngModel)]="selectModule.email" />
+          <button nz-button nzSize="small" nzType="primary" (click)="getUserList()" class="search-button">
+            查询
+          </button>
+          <button nz-button nzSize="small" (click)="resetUserSelectModule()">重置</button>
+        </div>
+      </nz-dropdown-menu>
+    </th>
+    <th>
+      手机
+      <i
+        nz-th-extra
+        class="search"
+        style="float: right; margin-top: 5px; margin-right: 10px"
+        nz-icon
+        nz-dropdown
+        #dropdown="nzDropdown"
+        nzType="search"
+        [nzDropdownMenu]="menu3"
+        [class.ant-table-filter-open]="dropdown.nzVisible"
+        nzTrigger="click"
+        nzPlacement="bottomLeft"
+        [nzClickHide]="false"
+        nzTableFilter
+      ></i>
+      <nz-dropdown-menu #menu3="nzDropdownMenu">
+        <div class="search-box">
+          <input type="text" nz-input placeholder="输入手机号" [(ngModel)]="selectModule.phone" />
+          <button nz-button nzSize="small" nzType="primary" (click)="getUserList()" class="search-button">
+            查询
+          </button>
+          <button nz-button nzSize="small" (click)="resetUserSelectModule()">重置</button>
+        </div>
+      </nz-dropdown-menu>
+    </th>
+    <th
+      nzShowSort
+      nzShowFilter
+      nzSortKey="stateSort"
+      [nzSort]="selectModule.stateSort"
+      [nzFilterMultiple]="false"
+      [nzFilters]="listStatus"
+      (nzFilterChange)="stateFilter($event)"
+      (nzSortChange)="stateSort($event)"
+    >
+      状态
+    </th>
+    <th
+      nzShowSort
+      nzShowFilter
+      nzSortKey="stateSort"
+      [nzSort]="selectModule.lockedSort"
+      [nzFilterMultiple]="false"
+      [nzFilters]="listLocks"
+      (nzFilterChange)="lockFilter($event)"
+      (nzSortChange)="lockSort($event)"
+    >
+      锁定
+    </th>
+    <th>角色</th>
+  </tr>
+  </thead>
+  <tbody>
+  <ng-container *ngFor="let myUser of users; let i = index">
+    <tr>
+      <td>{{myUser.username}}</td>
+      <td>{{myUser.email}}</td>
+      <td>{{myUser.phone}}</td>
+      <td nzAlign="left">
+        <nz-badge *ngIf="myUser.state === 0" nzStatus="processing" nzText="正常"></nz-badge>
+        <nz-badge *ngIf="myUser.state === 1" nzStatus="warning" nzText="停用"></nz-badge>
+        <nz-badge *ngIf="myUser.state === 2" nzStatus="default" nzText="注销"></nz-badge>
+      </td>
+      <td>
+        <div *ngIf="myUser.locked === 1">
+          <i style="color: red" nz-icon nzType="lock" nzTheme="outline"></i>锁定
+        </div>
+        <div *ngIf="myUser.locked === 0">
+          <i style="color: green" nz-icon nzType="unlock" nzTheme="outline"></i>未锁定
+        </div>
+      </td>
+      <td>
+        <a (click)="openRoleModal(myUser.id)">点击查看角色</a>
+      </td>
+    </tr>
+  </ng-container>
+  </tbody>
+  <tfoot></tfoot>
+</nz-table>
+<nz-modal
+  [(nzVisible)]="roleShowModal"
+  [nzTitle]="modalTitle"
+  [nzContent]="modalContent"
+  [nzFooter]="modalFooter"
+  (nzOnCancel)="handleModalClose()"
+  nzWidth="800px"
+>
+  <ng-template #modalTitle>
+    角色列表
+  </ng-template>
+
+  <ng-template #modalContent>
+    <div nz-row nzGutter="16">
+      <span *ngFor="let myRole of roles; let i=index">
+        <div nz-col nzSpan="8" *ngIf="myRole.visible">
+          <nz-card [nzActions]="[actionSetting, actionEllipsis]" [nzCover]="coverTemplate">
+            <nz-skeleton [nzActive]="true" [nzLoading]="false" [nzAvatar]="{ size: 'large' }">
+              <nz-card-meta
+                [nzAvatar]="avatarTemplate"
+                [nzTitle]="titleTemplate"
+                [nzDescription]="myRole.description"
+              >
+              </nz-card-meta>
+            </nz-skeleton>
+          </nz-card>
+          <ng-template #titleTemplate>
+            <span nz-tooltip nzTooltipPlacement="bottom" [nzTooltipTitle]="myRole.role">{{myRole.role}}</span>
+            <br>
+            <span nz-tooltip nzTooltipPlacement="bottom" [nzTooltipTitle]="myRole.ename">{{myRole.ename}}</span>
+          </ng-template>
+          <ng-template #coverTemplate>
+            <img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />
+          </ng-template>
+          <ng-template #avatarTemplate>
+            <nz-avatar nzSrc="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"></nz-avatar>
+          </ng-template>
+          <ng-template #actionSetting>
+            <i nz-icon
+               nzType="setting"
+               nz-popconfirm
+               nzPopconfirmTitle="取消修改并转到角色管理?"
+               (nzOnConfirm)="confirmToOtherPage()"
+               (nzOnCancel)="cancelToOtherPage()"
+               nzPopconfirmPlacement="topRight"></i>
+          </ng-template>
+          <ng-template #actionEllipsis>
+            <span style="font-size: 25px; margin-bottom: 3px; line-height: 15px" (click)="removeRole(i)">x</span>
+          </ng-template>
+        </div>
+      </span>
+    </div>
+  </ng-template>
+
+  <ng-template #modalFooter>
+    <button
+      nz-button
+      nzType="default"
+      nz-popconfirm
+      nzPopconfirmTitle="确定取消用户角色修改吗?"
+      (nzOnConfirm)="handleModalClose()"
+      nzPopconfirmPlacement="topRight">取消操作</button>
+    <button nz-button nzType="primary" (click)="handleModalOk()">保存</button>
+  </ng-template>
+</nz-modal>

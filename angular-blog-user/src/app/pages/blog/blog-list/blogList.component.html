@@ -1,0 +1,306 @@
+<nz-breadcrumb style="margin-bottom: 5px; margin-left: 10px;">
+  <nz-breadcrumb-item>
+    <a routerLink="/index/index">
+      <i nz-icon nzType="home"></i>
+      <span>首页</span>
+    </a>
+  </nz-breadcrumb-item>
+  <nz-breadcrumb-item>
+    <a routerLink="/blog/bloglist">
+      <i nz-icon nzType="book"></i>
+      <span>博客信息</span>
+    </a>
+  </nz-breadcrumb-item>
+  <nz-breadcrumb-item>
+    <span>博客列表</span>
+  </nz-breadcrumb-item>
+</nz-breadcrumb>
+<nz-card>
+  <div
+    style="
+      margin-bottom: 20px;
+      padding: 5px;
+      background-color: rgba(240, 229, 229, 0.2);
+      border-radius: 5px;
+    "
+  >
+    <div nz-row class="search_row">
+      <div nz-col nzSpan="2"><span class="search_topic">分类搜索:</span></div>
+      <div nz-col nzSpan="13">
+        <nz-select nzAllowClear nzMode="multiple"
+                   nzPlaceHolder="一级分类"
+                   [nzCustomTemplate]="defaultTemplate" style="width: 100%"
+                   [(ngModel)]="moduleSelectedIndexes" (ngModelChange)="refreshSecondCategory()">
+          <nz-option [nzLabel]="item.title" [nzValue]="i" *ngFor="let item of modules; let i = index"></nz-option>
+        </nz-select>
+        <ng-template #defaultTemplate let-selected> {{ selected.nzLabel }} </ng-template>
+      </div>
+    </div>
+    <div nz-row class="search_row" *ngIf="showMenuSelect">
+      <div nz-col nzSpan="2"><span class="search_topic">二级分类:</span></div>
+      <div nz-col nzSpan="13">
+        <nz-select nzAllowClear nzMode="multiple"
+                   nzPlaceHolder="二级分类"
+                   [nzCustomTemplate]="defaultTemplate" style="width: 100%"
+                   [(ngModel)]="secondCategorySelectedIds">
+          <nz-option [nzLabel]="item.title" [nzValue]="item.id" *ngFor="let item of secondCategory; let i = index"></nz-option>
+        </nz-select>
+        <ng-template #defaultTemplate let-selected>{{ selected.nzLabel }} </ng-template>
+      </div>
+    </div>
+    <div nz-row class="search_row">
+      <div nz-col nzSpan="2">
+        <span class="search_topic">标签搜索:</span>
+      </div>
+      <div nz-col nzSpan="13">
+        <nz-select
+          [(ngModel)]="blog.tags"
+          nzMode="tags"
+          [nzTokenSeparators]="[',']"
+          [nzMaxTagCount]="5"
+          nzPlaceHolder="选择或输入标签,回车保存"
+          style="width: 100%;"
+        >
+          <nz-option
+            *ngFor="let option of listOfTag"
+            [nzLabel]="option"
+            [nzValue]="option"
+          ></nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div nz-row class="search_row">
+      <div nz-col nzSpan="2"><span class="search_topic">标题搜索:</span></div>
+      <div nz-col nzSpan="5">
+        <input
+          nz-input
+          placeholder="文章标题,摘要"
+          [(ngModel)]="blog.title"
+          (keypress)="$event.which === 13 ? selectList() : 0"
+        />
+      </div>
+      <div nz-col nzSpan="2" nzOffset="1">
+        <span class="search_topic">内容搜索:</span>
+      </div>
+      <div nz-col nzSpan="5">
+        <input
+          nz-input
+          placeholder="文章内容"
+          [(ngModel)]="blog.blogContent.contentMd"
+          (keypress)="$event.which === 13 ? selectList() : 0"
+        />
+      </div>
+      <div nz-col nzSpan="4" nzOffset="4">
+        <button nz-button nzType="primary" (click)="selectList()">
+          查询
+        </button>
+        <button
+          nz-button
+          nzType="primary"
+          style="margin-left: 10px;"
+          (click)="reSetTerms()"
+        >
+          重置
+        </button>
+      </div>
+    </div>
+  </div>
+  <nz-table
+    style="min-width: 1450px;"
+    #basicTable
+    [nzData]="blogs"
+    [nzFrontPagination]="false"
+    [nzBordered]="false"
+    [nzLoadingDelay]="1000"
+    nzTableLayout="fixed"
+  >
+    <thead>
+      <tr>
+        <th nzWidth="30px" nzAlign="center">
+          <div class="inner_table" style="width: 30px;">序号</div>
+        </th>
+        <th nzWidth="80px" nzAlign="center">推荐</th>
+        <th
+          nzWidth="100px"
+          nzAlign="center"
+          [nzFilters]="statusFilters"
+          nzShowFilter
+          (nzFilterChange)="nzFilterChange($event)"
+          [nzFilterMultiple]="false"
+        >
+          状态
+        </th>
+        <th nzWidth="240px" style="width: 240px;">标题</th>
+        <th nzWidth="300px" nzAlign="left">
+          摘要
+        </th>
+        <th nzWidth="100px" nzAlign="center">点赞量</th>
+        <th nzWidth="100px" nzAlign="center">阅读量</th>
+        <th nzWidth="100px" nzAlign="center">评论量</th>
+        <th nzWidth="200px" nzAlign="center">发布时间</th>
+        <th nzWidth="200px" nzAlign="center">操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let blog of blogs; index as index">
+        <td nzWidth="30px" nzAlign="center">
+          <div class="inner_table" style="width: 30px;">{{ index + 1 }}</div>
+        </td>
+        <td nzAlign="center">
+          <nz-badge nzStatus="error" nzText="否"></nz-badge>
+        </td>
+<!--        <td nzAlign="center">-->
+<!--          <nz-badge nzStatus="success" nzText="是" *ngIf="blog.blogRecommend.id"></nz-badge>-->
+<!--          <nz-badge nzStatus="error" nzText="否" *ngIf="!blog.blogRecommend.id"></nz-badge>-->
+<!--        </td>-->
+        <td nzWidth="100px" nzAlign="center">
+          <div *ngIf="blog.isDeleted !== 1 && blog.isShow === 1">
+            正常
+          </div>
+          <div *ngIf="blog.isDeleted === 1">删除</div>
+          <div *ngIf="blog.isShow === 0 && blog.isDeleted !== 1">
+            审核中
+          </div>
+<!--          <div *ngIf="blog.blogType === 0">-->
+<!--            技术-->
+<!--          </div>-->
+<!--          <div *ngIf="blog.blogType === 1">-->
+<!--            情感-->
+<!--          </div>-->
+        </td>
+        <td nzWidth="240px">
+          <ng-container
+            *ngIf="!editCache[blog.id].edit; else nameInputTplTitle"
+          >
+            <div
+              class="inner_table"
+              style="width: 200px;"
+              nz-popover
+              [nzPopoverContent]="contentTemplate"
+              nzPopoverPlacement="top"
+            >
+              <nz-tag [nzColor]="'green'" *ngIf="blog.provenance === 0">
+                原
+              </nz-tag>
+              <nz-tag [nzColor]="'red'" *ngIf="blog.provenance === 1">
+                转
+              </nz-tag>
+              <nz-tag [nzColor]="'orange'" *ngIf="blog.provenance === 2">
+                译
+              </nz-tag>
+              {{ blog.title }}
+            </div>
+          </ng-container>
+          <ng-template #contentTemplate>
+            <div>{{ blog.title }}</div>
+          </ng-template>
+          <ng-template #nameInputTplTitle>
+            <input
+              type="text"
+              nz-input
+              [(ngModel)]="editCache[blog.id].data.title"
+            />
+          </ng-template>
+        </td>
+        <td nzWidth="300px" nzAlign="left">
+          <ng-container
+            *ngIf="!editCache[blog.id].edit; else nameInputTplSum"
+          >
+            <div
+              class="inner_table"
+              style="width: 280px;"
+              nz-popover
+              [nzPopoverContent]="contentTemplate2"
+              nzPopoverPlacement="bottomLeft"
+            >
+              {{ blog.summary }}
+            </div>
+          </ng-container>
+          <ng-template #contentTemplate2>
+            <div style="max-width: 300px;">{{ blog.summary }}</div>
+          </ng-template>
+          <ng-template #nameInputTplSum>
+            <input
+              type="text"
+              nz-input
+              [(ngModel)]="editCache[blog.id].data.summary"
+            />
+          </ng-template>
+        </td>
+        <td nzWidth="100px" nzAlign="center">
+          {{ blog.blogStatistics.goods }}
+        </td>
+        <td nzWidth="100px" nzAlign="center">
+          {{ blog.blogStatistics.readings }}
+        </td>
+        <td nzWidth="100px" nzAlign="center">
+          {{ blog.blogStatistics.comments }}
+        </td>
+        <td nzWidth="200px" nzAlign="center">
+          {{ blog.createdTime | date: "yyyy-MM-dd HH:mm:ss" }}
+        </td>
+        <td nzWidth="170px" nzAlign="center">
+          <a
+            (click)="revokeDeletedArtcle(blog.id)"
+            *ngIf="!editCache[blog.id].edit && blog.isDeleted === 1"
+          >
+            取消删除
+          </a>
+          <a
+            nz-popconfirm
+            nzTitle="确定删除?"
+            (nzOnConfirm)="deletedArtcle(blog.id)"
+            *ngIf="!editCache[blog.id].edit && blog.isDeleted !== 1"
+          >
+            删除
+          </a>
+          <nz-divider
+            nzType="vertical"
+            *ngIf="!editCache[blog.id].edit"
+          ></nz-divider>
+          <ng-container *ngIf="!editCache[blog.id].edit; else saveTpl">
+            <a (click)="editArtcle(index, blog.id)">编辑</a>
+          </ng-container>
+          <nz-divider
+            nzType="vertical"
+            *ngIf="!editCache[blog.id].edit"
+          >
+          </nz-divider>
+          <a
+            *ngIf="!editCache[blog.id].edit"
+            (click)="moreInfomation(blog.id)"
+          >
+            详情
+          </a>
+          <ng-template #saveTpl>
+            <a (click)="saveEdit(index, blog.id)">保存</a>
+            <nz-divider nzType="vertical"></nz-divider>
+            <a
+              nz-popconfirm
+              nzTitle="撤销修改?"
+              (nzOnConfirm)="cancelEdit(index, blog.id)"
+            >
+              取消
+            </a>
+          </ng-template>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <div style="height: 30px; margin: 20px;">
+    <nz-pagination
+      style="float: right; margin-bottom: 0px;"
+      [(nzPageIndex)]="pageInfo.pageNum"
+      [nzTotal]="pageInfo.totalSize"
+      [nzSize]="'small'"
+      nzShowSizeChanger
+      nzShowQuickJumper
+      (nzPageIndexChange)="nzPageIndexChange($event)"
+      (nzPageSizeChange)="nzPageSizeChange($event)"
+      [nzPageSizeOptions]="[10, 15, 20, 25, 30]"
+      [nzShowTotal]="totalTemplate"
+    >
+    </nz-pagination>
+    <ng-template #totalTemplate let-total> 共 {{ total }} 篇 </ng-template>
+  </div>
+</nz-card>
