@@ -14,6 +14,10 @@ export class UserService {
    * 后台服务地址
    */
   baseUrl = environment.BASE_DATA_SERVER_URL;
+  /**
+   * 后台登陆地址，授权地址
+   */
+  oauthLogin = environment.OAUTH_LOGIN;
 
   constructor(private http: HttpService) {}
 
@@ -21,7 +25,7 @@ export class UserService {
    * 获取token
    */
   getToken(code) {
-    const url = 'https://www.zlztsb.com:18080/login/token?code=' + code;
+    const url = `${this.oauthLogin}/login/token?code=${code}`;
     return this.http.get(url, MessageShowEnum.NONE);
   }
 

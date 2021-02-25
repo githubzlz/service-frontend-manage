@@ -1,7 +1,8 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {UserService} from "../../common/service/user/user.service";
-import {ResultSetModel} from "../../common/model/commonmodel/resultset.model";
+import {UserService} from '../../common/service/user/user.service';
+import {ResultSetModel} from '../../common/model/commonmodel/resultset.model';
+import {environment} from '../../../environments/environment';
 
 @Component({
   template: `
@@ -12,6 +13,8 @@ import {ResultSetModel} from "../../common/model/commonmodel/resultset.model";
 
 export class LoginComponent implements OnInit, AfterViewInit {
 
+  oauthLogin = environment.OAUTH_LOGIN;
+
   constructor(public activatedRouter: ActivatedRoute,
               public router: Router,
               public userservice: UserService) {
@@ -21,13 +24,13 @@ export class LoginComponent implements OnInit, AfterViewInit {
     window.sessionStorage.clear();
     this.activatedRouter.queryParams.subscribe(param => {
       if (!param.code) {
-        window.location.href = 'https://www.zlztsb.com:18080/login';
+        window.location.href = `${this.oauthLogin}/login`;
       } else {
         // 获取token
         this.userservice.getToken(param.code).subscribe((date: ResultSetModel) => {
           // 获取成功就 设置到session中，然后去获取用户信息
           if (date.code !== 1) {
-            window.location.href = 'https://www.zlztsb.com:18080/login';
+            window.location.href = `${this.oauthLogin}/login`;
             return;
           } else {
             window.sessionStorage.setItem('access_token', date.entity.token);

@@ -19,6 +19,11 @@ export class LoginService implements HttpInterceptor {
    */
   baseUrl = environment.BASE_DATA_SERVER_URL;
 
+  /**
+   * 后台登陆地址，授权地址
+   */
+  oauthLogin = environment.OAUTH_LOGIN;
+
   constructor(private http: HttpService) {}
 
 
@@ -70,7 +75,7 @@ export class LoginService implements HttpInterceptor {
    * 退出登录
    */
   logOut() {
-    const url = `https://www.zlztsb.com:18080/login/token/logout`;
+    const url = `${this.oauthLogin}/login/token/logout`;
     const token = window.sessionStorage.getItem('access_token');
     return this.http.get(url);
   }

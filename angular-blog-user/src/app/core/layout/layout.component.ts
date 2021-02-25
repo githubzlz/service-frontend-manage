@@ -5,6 +5,7 @@ import { NzMessageService } from 'ng-zorro-antd';
 import {LoginUser} from '../../common/model/userinfo/loginuser.model';
 import {LoginService} from '../../common/util/login.service';
 import {ResultSetModel} from '../../common/model/commonmodel/resultset.model';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-layout',
@@ -17,6 +18,7 @@ export class LayoutComponent implements OnInit {
   isCollapsed = false;
   // 当前用户
   loginUser: LoginUser = new LoginUser();
+  serviceUrl = environment.SERVICE_URL;
   constructor(
     private router: Router,
     private message: NzMessageService,
@@ -50,7 +52,7 @@ export class LayoutComponent implements OnInit {
       if(ResultSetModel.isSuccess(date)){
         window.location.href = date.message;
       } else {
-        window.location.href = 'https://www.zlztsb.com:4443';
+        window.location.href = this.serviceUrl;
       }
     });
   }

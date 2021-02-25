@@ -13,16 +13,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new BlogUserInterceptor()).addPathPatterns("/**")
-                .excludePathPatterns("static/**")
-                .excludePathPatterns("/index")
-                .excludePathPatterns("/login")
-                .excludePathPatterns("/index/index")
-                .excludePathPatterns("/user/basicuserinfo")
-                .excludePathPatterns("/user/safetyinfo")
-                .excludePathPatterns("/blog/bloglist")
-                .excludePathPatterns("/blog/typemanage")
-                .excludePathPatterns("/write/write")
-                .excludePathPatterns("/write/recycle")
-                .excludePathPatterns("/webinfo");
+                .excludePathPatterns("/").excludePathPatterns("/static/**");
     }
 }
