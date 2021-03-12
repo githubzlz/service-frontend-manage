@@ -4,9 +4,9 @@
 
 export const environment = {
   SERVER_URL: ``,
-  BASE_DATA_SERVER_URL: `http://39.104.125.236:18080/blog-manage`,
-  OAUTH_LOGIN: `http://39.104.125.236:18080`,
-  SERVICE_URL: 'http://39.104.125.236/manage',
+  BASE_DATA_SERVER_URL: `https://www.zlztsb.com/apis/blog-manage`,
+  OAUTH_LOGIN: `https://www.zlztsb.com/apis`,
+  SERVICE_URL: 'https://www.zlztsb.com/manage',
   MOCK_SERVER_URL: '',
   // environmentType: EnvironmentEnumModel.DEVELOPMENT,
   production: true,
