@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { BlogListComponent } from './blog-list/blogList.component';
 import { BlogStatisticComponent } from './blog-statistic/blogStatistic.component';
 import { ModuleComponent } from './modulemanage/module.component';
+import {AttachmentComponent} from './attachment/attachment.component';
 
 const routes: Routes = [
   {
@@ -20,6 +21,10 @@ const routes: Routes = [
   {
     path: 'typemanage',
     component: ModuleComponent,
+  },
+  {
+    path: 'attachfile',
+    component: AttachmentComponent,
   },
 ];
 

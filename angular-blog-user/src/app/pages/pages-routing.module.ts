@@ -1,13 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { LayoutComponent } from '../core/layout/layout.component';
 import { WebInfoComponent } from './web-info/web-info.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'index', pathMatch: 'full' },
   {
     path: 'index',
-    component: LayoutComponent,
     children: [
       {
         path: '',
@@ -18,7 +16,6 @@ const routes: Routes = [
   },
   {
     path: 'user',
-    component: LayoutComponent,
     children: [
       {
         path: '',
@@ -29,7 +26,6 @@ const routes: Routes = [
   },
   {
     path: 'blog',
-    component: LayoutComponent,
     children: [
       {
         path: '',
@@ -40,7 +36,6 @@ const routes: Routes = [
   },
   {
     path: 'other',
-    component: LayoutComponent,
     children: [
       {
         path: '',
@@ -51,7 +46,6 @@ const routes: Routes = [
   },
   {
     path: 'write',
-    component: LayoutComponent,
     children: [
       {
         path: '',
@@ -62,11 +56,11 @@ const routes: Routes = [
   },
   {
     path: 'webinfo',
-    component: LayoutComponent,
     children: [
       {
         path: '',
-        component: WebInfoComponent,
+        loadChildren: () =>
+          import('../pages/web-info/webinfo.module').then((m) => m.WebInfoModule),
       },
     ],
   },

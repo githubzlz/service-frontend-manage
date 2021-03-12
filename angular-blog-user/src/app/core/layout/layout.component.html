@@ -35,6 +35,7 @@
             [nzSelected]="menu.selected"
             [routerLink]="menu.url"
             [nzMatchRouter]="true"
+            (click)="addSideList(menu)"
           >
             <i nz-icon [nzType]="menu.icon" *ngIf="menu.icon"></i>
             <span>{{ menu.title }}</span>
@@ -98,6 +99,18 @@
       </div>
     </nz-header>
     <nz-content style="position: relative; min-width: 1450px;">
+      <div style="width: 100%; height: 50px; background-color: #00a8c6; vertical-align: center">
+        <div style="display: inline-block; position: relative; height: 25px;
+        margin-left: 5px; margin-right: 5px; border: 1px solid rgba(0,0,0,0.3);
+        background-color: whitesmoke; border-radius: 5px"
+             *ngFor="let side of sideList">
+          <i nz-icon nzType="close" nzTheme="outline"
+             tyle="position: absolute; right: 0px; top: 0px"></i>
+          <span style="color: rgba(0,0,0,0.8); margin: auto 5px">
+            {{side.title}}
+          </span>
+        </div>
+      </div>
       <router-outlet></router-outlet>
     </nz-content>
   </nz-layout>

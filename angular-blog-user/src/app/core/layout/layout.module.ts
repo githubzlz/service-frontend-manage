@@ -8,6 +8,9 @@ import { ShareModule } from '../share/share.module';
 
 @NgModule({
   declarations: [LayoutComponent],
+  exports: [
+    LayoutComponent
+  ],
   imports: [
     CommonModule,
     ShareModule,

@@ -19,6 +19,7 @@ export class LayoutComponent implements OnInit {
   // 当前用户
   loginUser: LoginUser = new LoginUser();
   serviceUrl = environment.SERVICE_URL;
+  sideList: MenuModule[] = [];
   constructor(
     private router: Router,
     private message: NzMessageService,
@@ -56,4 +57,18 @@ export class LayoutComponent implements OnInit {
       }
     });
   }
+
+  addSideList(menu: MenuModule) {
+    let repetition = false;
+    for (const side of this.sideList) {
+      if (menu.url === side.url) {
+        repetition = true;
+        break;
+      }
+    }
+    if (menu.side && !repetition) {
+      this.sideList.push(menu);
+    }
+  }
+
 }

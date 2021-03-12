@@ -7,6 +7,7 @@ export class MenuModule {
     public open?: boolean,
     public selected?: boolean,
     public disabled?: boolean,
+    public side?: boolean,
     public children?: MenuModule[]
   ) {}
 
@@ -31,12 +32,14 @@ export class MenuModule {
           title: '个人中心',
           icon: 'user',
           url: '/user/basicuserinfo',
+          side: true
         },
         {
           level: 2,
           title: '权限信息',
           icon: 'safety',
           url: '/user/safetyinfo',
+          side: true
         },
       ],
     },
@@ -58,6 +61,7 @@ export class MenuModule {
           icon: 'unordered-list',
           selected: false,
           url: '/blog/bloglist',
+          side: true
         },
         {
           level: 2,
@@ -65,6 +69,15 @@ export class MenuModule {
           selected: false,
           icon: 'cluster',
           url: '/blog/typemanage',
+          side: true
+        },
+        {
+          level: 2,
+          title: '附件管理',
+          selected: false,
+          icon: 'cluster',
+          url: '/blog/attachfile',
+          side: true
         },
         {
           level: 2,
@@ -80,6 +93,7 @@ export class MenuModule {
           icon: 'line-chart',
           url: '/blog/check',
           disabled: true,
+          side: true
         },
         {
           level: 2,
@@ -88,6 +102,7 @@ export class MenuModule {
           icon: 'cluster',
           url: '/blog/blogstatistic',
           disabled: true,
+          side: true
         },
         {
           level: 2,
@@ -96,6 +111,7 @@ export class MenuModule {
           icon: 'cluster',
           url: '/blog/hot',
           disabled: true,
+          side: true
         },
       ],
     },
@@ -110,12 +126,14 @@ export class MenuModule {
           title: '写博客',
           icon: 'edit',
           url: '/write/write',
+          side: true
         },
         {
           level: 2,
           title: '回收站',
           icon: 'rest',
           url: '/write/recycle',
+          side: true
         },
       ],
     },
@@ -124,6 +142,7 @@ export class MenuModule {
       title: '关于网站',
       icon: 'info-circle',
       url: '/webinfo',
+      side: true
     },
   ];
 }
