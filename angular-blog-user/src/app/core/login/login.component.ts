@@ -22,7 +22,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
   ngOnInit() {
     window.sessionStorage.clear();
-    debugger;
     this.activatedRouter.queryParams.subscribe(param => {
       if (!param.code) {
         window.location.href = `${this.oauthLogin}/login`;
